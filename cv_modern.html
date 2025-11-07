@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>[[name]] — CV</title>
+  <style>
+    :root{
+      --ink:#111;
+      --sub:#666;
+      --line:#e6e6e6;
+      --accent:#e9ecef;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#fff}
+    .page{width:210mm;min-height:297mm;padding:18mm 18mm 16mm;margin:0 auto;background:#fff}
+    h1,h2,h3,p,ul{margin:0}
+    a{color:inherit;text-decoration:none}
+    .head{display:grid;grid-template-columns:1fr 220px;gap:18px;align-items:start;margin-bottom:16px}
+    .name{font-size:34px;letter-spacing:1px;font-weight:800;line-height:1.05}
+    .role{margin-top:6px;font-size:16px;color:var(--sub);font-weight:600}
+    .contact{justify-self:end;border-left:1px solid var(--line);padding-left:14px;color:var(--ink);font-size:12.5px}
+    .contact .row{display:flex;gap:8px;align-items:center;margin:4px 0}
+    .contact .label{width:16px;text-align:center;color:#888;font-weight:700}
+    .section{margin-top:14px}
+    .bar{background:var(--accent);padding:7px 10px;border-radius:4px;font-weight:800;letter-spacing:.4px}
+    .body{padding:10px 2px 0}
+    .item{margin:10px 0 8px}
+    .item-h{font-weight:700}
+    .item-m{color:var(--sub);font-size:12.5px;margin-top:2px}
+    .item-p{margin-top:6px}
+    .bullets{margin:6px 0 0 0;padding-left:18px}
+    .bullets li{margin:4px 0}
+    .bullets li::marker{color:#999}
+    .skills-line{margin-top:8px;color:#333}
+    .foot{margin-top:16px;color:#888;font-size:11.5px;text-align:right}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="head">
+      <div>
+        <div class="name">[[name]]</div>
+        <div class="role">[[role]]</div>
+      </div>
+      <div class="contact">
+        <div class="row"><span class="label">☎︎</span><span>[[phone]]</span></div>
+        <div class="row"><span class="label">✉︎</span><span>[[email]]</span></div>
+        <div class="row"><span class="label">⌂</span><span>[[location]]</span></div>
+        <div class="row"><span class="label">⎋</span><span>[[website]]</span></div>
+      </div>
+    </header>
+    <section class="section">
+      <div class="bar">PROFILE</div>
+      <div class="body">
+        <p>[[summary]]</p>
+      </div>
+    </section>
+    <section class="section">
+      <div class="bar">EMPLOYMENT HISTORY</div>
+      <div class="body">
+        [[experience_html]]
+      </div>
+    </section>
+    <section class="section">
+      <div class="bar">EDUCATION</div>
+      <div class="body">
+        [[education_html]]
+      </div>
+    </section>
+    <section class="section">
+      <div class="bar">SKILLS</div>
+      <div class="body">
+        <p class="skills-line">[[skills]]</p>
+      </div>
+    </section>
+    <div class="foot">Updated [[updated]]</div>
+  </div>
+</body>
+</html>

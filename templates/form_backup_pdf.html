@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QuickCV — Generate</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:24px}
+    h1{margin-bottom:6px}.muted{color:#666;margin-bottom:18px}
+    label{display:block;margin:8px 0 4px;font-weight:600}
+    input,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px}
+    textarea{min-height:80px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:8px;margin-top:8px}
+    .card{border:1px solid #eee;border-radius:12px;padding:12px;margin:12px 0}
+    .actions{margin-top:16px}
+    button{padding:10px 14px;border:0;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.06);cursor:pointer}
+    .small{padding:6px 10px;border-radius:8px}
+  </style>
+</head>
+<body>
+  <h1>QuickCV — Generate</h1>
+  <div class="muted">Fill the fields below. Use “Add” to include more entries.</div>
+
+  <form id="cv-form" method="post" action="/generate">
+    <div class="grid">
+      <div><label>Name</label><input name="name" placeholder="Alex Johnson" required></div>
+      <div><label>Role</label><input name="role" placeholder="Junior Web Developer"></div>
+    </div>
+    <div class="grid">
+      <div><label>Location</label><input name="location" placeholder="Leeds, UK"></div>
+      <div><label>Email</label><input name="email" placeholder="alex@example.com"></div>
+    </div>
+    <div class="grid">
+      <div><label>Phone</label><input name="phone" placeholder="+44 7123 456 789"></div>
+      <div><label>Website</label><input name="website" placeholder="https://yoursite.com"></div>
+    </div>
+
+    <label>Profile Summary</label>
+    <textarea name="summary" placeholder="2–4 lines about you."></textarea>
+
+    <label>Skills (comma-separated)</label>
+    <input name="skills" placeholder="HTML, CSS, JavaScript, React, Git">
+
+    <div class="card">
+      <div class="row" style="grid-template-columns:1fr auto">
+        <div><strong>Experience</strong></div>
+        <div style="text-align:right"><button type="button" class="small" id="add-exp">+ Add experience</button></div>
+      </div>
+      <div id="exp-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="grid-template-columns:1fr auto">
+        <div><strong>Education</strong></div>
+        <div style="text-align:right"><button type="button" class="small" id="add-edu">+ Add education</button></div>
+      </div>
+      <div id="edu-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="grid-template-columns:1fr auto">
+        <div><strong>Projects</strong></div>
+        <div style="text-align:right"><button type="button" class="small" id="add-proj">+ Add project</button></div>
+      </div>
+      <div id="proj-list"></div>
+    </div>
+
+    <div class="grid">
+      <div><label>Certifications (comma-separated)</label><input name="certs" placeholder="Google Analytics, AWS CCP"></div>
+      <div><label>Awards (comma-separated)</label><input name="awards" placeholder="Student of the Year"></div>
+    </div>
+
+    <textarea name="experience_json" id="experience_json" hidden></textarea>
+    <textarea name="education_json" id="education_json" hidden></textarea>
+    <textarea name="projects_json" id="projects_json" hidden></textarea>
+
+    <div class="actions"><button type="submit">Generate CV</button></div>
+  </form>
+
+  <template id="tpl-exp">
+    <div class="row">
+      <input placeholder="Title (e.g., Web Developer)" data-k="title">
+      <input placeholder="Company" data-k="company">
+      <input placeholder="Location" data-k="location">
+      <input placeholder="Start (YYYY-MM)" data-k="start">
+      <input placeholder="End (YYYY-MM or Present)" data-k="end">
+      <div style="grid-column:1/-1"><input placeholder="Highlights (comma-separated)" data-k="highlights"></div>
+      <div style="grid-column:1/-1;text-align:right"><button type="button" class="small remove">Remove</button></div>
+    </div>
+  </template>
+
+  <template id="tpl-edu">
+    <div class="row">
+      <input placeholder="Qualification" data-k="qualification">
+      <input placeholder="Institution" data-k="institution">
+      <input placeholder="Start (YYYY)" data-k="start">
+      <input placeholder="End (YYYY)" data-k="end">
+      <input placeholder="Details" data-k="details" style="grid-column:1/-1">
+      <div style="grid-column:1/-1;text-align:right"><button type="button" class="small remove">Remove</button></div>
+    </div>
+  </template>
+
+  <template id="tpl-proj">
+    <div class="row">
+      <input placeholder="Name" data-k="name">
+      <input placeholder="Link (optional)" data-k="link">
+      <input placeholder="Summary" data-k="summary" style="grid-column:1/-1">
+      <div style="grid-column:1/-1;text-align:right"><button type="button" class="small remove">Remove</button></div>
+    </div>
+  </template>
+
+  <script>
+    const expList = document.getElementById('exp-list');
+    const eduList = document.getElementById('edu-list');
+    const projList = document.getElementById('proj-list');
+
+    function addRow(list, tplId){
+      const tpl = document.getElementById(tplId);
+      const node = tpl.content.firstElementChild.cloneNode(true);
+      node.querySelector('.remove').onclick = () => node.remove();
+      list.appendChild(node);
+    }
+    document.getElementById('add-exp').onclick = () => addRow(expList, 'tpl-exp');
+    document.getElementById('add-edu').onclick = () => addRow(eduList, 'tpl-edu');
+    document.getElementById('add-proj').onclick = () => addRow(projList, 'tpl-proj');
+
+    addRow(expList, 'tpl-exp');
+    addRow(eduList, 'tpl-edu');
+    addRow(projList, 'tpl-proj');
+
+    document.getElementById('cv-form').addEventListener('submit', (e) => {
+      const collect = (container) => {
+        return Array.from(container.children).map(row => {
+          const obj = {};
+          row.querySelectorAll('[data-k]').forEach(inp => {
+            const k = inp.getAttribute('data-k');
+            if(k === 'highlights'){
+              obj[k] = inp.value.split(',').map(s => s.trim()).filter(Boolean);
+            } else {
+              obj[k] = inp.value.trim();
+            }
+          });
+          return obj;
+        }).filter(o => Object.values(o).some(v => v));
+      };
+      document.getElementById('experience_json').value = JSON.stringify(collect(expList));
+      document.getElementById('education_json').value = JSON.stringify(collect(eduList));
+      document.getElementById('projects_json').value = JSON.stringify(collect(projList));
+    });
+  </script>
+</body>
+</html>

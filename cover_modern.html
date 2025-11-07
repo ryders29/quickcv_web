@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cover Letter — [[name]]</title>
+<style>
+  :root{--ink:#111;--sub:#666;--line:#e6e6e6}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#fff;color:var(--ink);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  .page{width:210mm;min-height:297mm;margin:0 auto;padding:20mm}
+  .head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;border-bottom:1px solid var(--line);padding-bottom:10px}
+  .who{font-weight:800;font-size:22px;line-height:1.05}
+  .meta{color:var(--sub);font-size:12.5px;text-align:right}
+  .meta div{margin:2px 0}
+  .to{margin:14px 0 10px}
+  .body p{margin:10px 0}
+  .sign{margin-top:18px}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="head">
+      <div class="who">[[name]]</div>
+      <div class="meta">
+        <div>[[email]]</div>
+        <div>[[phone]]</div>
+        <div>[[location]]</div>
+        <div>[[website]]</div>
+      </div>
+    </div>
+
+    <div class="to">
+      <div>[[date]]</div>
+      <div>[[company]]</div>
+    </div>
+
+    <div class="body">
+      <p>Dear Hiring Manager,</p>
+      <p>[[body]]</p>
+      <p>Thank you for your time and consideration.</p>
+    </div>
+
+    <div class="sign">
+      <div>Kind regards,</div>
+      <div>[[name]]</div>
+    </div>
+  </div>
+</body>
+</html>

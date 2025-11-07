@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QuickCV — Generate</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#fff}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    h1{margin-bottom:6px}.muted{color:#666;margin-bottom:18px}
+    label{display:block;margin:8px 0 4px;font-weight:600}
+    input,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px}
+    textarea{min-height:80px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:8px;margin-top:8px}
+    .card{border:1px solid #eee;border-radius:12px;padding:12px;margin:16px 0}
+    .card-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .card-actions{display:flex;gap:8px;align-items:center}
+    .actions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
+    button{padding:10px 14px;border:0;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.06);cursor:pointer}
+    .small{padding:6px 10px;border-radius:8px}
+    .seg-wrap{margin:12px 0 6px}
+    .seg{display:inline-flex;border:1px solid #d9d9d9;border-radius:12px;overflow:hidden;background:#fff}
+    .seg button{padding:10px 14px;border:0;background:transparent;cursor:pointer;min-width:110px;font-weight:600;color:#333}
+    .seg button+button{border-left:1px solid #eaeaea}
+    .seg button.active{background:#f2f7ff;color:#1f6feb;box-shadow:inset 0 0 0 2px rgba(31,111,235,.15)}
+    .hint{color:#777;font-size:12px;margin-top:6px}
+    .topbar{position:sticky;top:0;background:#fff;border-bottom:1px solid #eee;z-index:10}
+    .topbar-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:10px 24px}
+    .topbar .title{font-weight:800}
+    @media (max-width:720px){.grid{grid-template-columns:1fr} .row{grid-template-columns:1fr 1fr}}
+  
+/* --- Mobile polish --- */
+@media (max-width: 720px){
+  .wrap{padding:16px}
+  .topbar-inner{padding:8px 16px}
+  .card{margin:12px 0}
+  .grid{grid-template-columns:1fr}
+  .row{grid-template-columns:1fr}
+  .actions{flex-direction:column; gap:8px}
+  .actions button{width:100%}
+  .seg{flex-wrap:wrap; overflow:auto; -webkit-overflow-scrolling:touch}
+  .seg button{min-width:unset; flex:1 1 33%}
+  input, textarea{font-size:16px} /* prevent iOS zoom */
+}
+
+
+/* --- Mobile refinement v2 --- */
+@media (max-width: 720px){
+  .wrap{padding:16px}
+  .topbar{padding-top: env(safe-area-inset-top)}
+  .topbar-inner{padding:8px 16px; gap:10px}
+  .topbar .actions{display:flex; gap:8px}
+  .topbar .actions button{padding:8px 12px; font-size:14px; border-radius:10px}
+  h1{font-size:34px; margin:8px 0 2px}
+  .muted{font-size:14px}
+  label{margin:10px 0 6px}
+  .card{margin:12px 0; padding:12px}
+  .grid{grid-template-columns:1fr}
+  .row{grid-template-columns:1fr; gap:8px}
+  input, textarea{font-size:16px; padding:12px} /* prevent iOS zoom + comfy tap */
+  input::placeholder, textarea::placeholder{font-size:14px; opacity:.65}
+  .actions{flex-direction:column; gap:8px}
+  .actions button{width:100%}
+  .seg{width:100%; flex-wrap:wrap; overflow:auto; -webkit-overflow-scrolling:touch}
+  .seg button{flex:1 1 33%; min-width:0; padding:10px 8px; font-size:14px}
+  .hint{font-size:12px}
+  .small{padding:6px 10px; font-size:14px}
+}
+
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="title">QuickCV</div>
+      <div class="actions">
+        <button type="button" id="bar-analyze">Rate my CV</button>
+        <button type="button" id="bar-pdf">Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <h1>Generate</h1>
+    <div class="muted">Your progress is saved automatically on this device.</div>
+
+    <form id="cv-form" method="post" action="/generate">
+      <label>Template Style</label>
+      <div class="seg-wrap">
+        <div class="seg" id="seg">
+          <button type="button" data-template="classic" class="active">Classic</button>
+          <button type="button" data-template="modern">Modern</button>
+          <button type="button" data-template="compact">Compact</button>
+        </div>
+        <div class="hint">Click to choose a style. Your choice is saved.</div>
+      </div>
+      <input type="hidden" name="template" id="templateField" value="classic">
+
+      <div class="grid">
+        <div><label>Name</label><input name="name" placeholder="Alex Johnson" required></div>
+        <div><label>Role</label><input name="role" placeholder="Junior Web Developer"></div>
+      </div>
+      <div class="grid">
+        <div><label>Location</label><input name="location" placeholder="Leeds, UK"></div>
+        <div><label>Email</label><input name="email" placeholder="alex@example.com"></div>
+      </div>
+      <div class="grid">
+        <div><label>Phone</label><input name="phone" placeholder="+44 7123 456 789"></div>
+        <div><label>Website</label><input name="website" placeholder="https://yoursite.com"></div>
+      </div>
+
+      <label>Profile Summary</label>
+      <textarea name="summary" placeholder="2–4 lines about you."></textarea>
+<small style="display:block; color:#666; margin-top:4px; margin-bottom:20px;">💡 Tip: Keep it 2–4 lines. Mention your experience, key skills, and career goals.</small>
+
+      <label>Skills (comma-separated)</label>
+      <input name="skills" placeholder="e.g. Teamwork, Communication, Excel, Problem Solving, Python, French">
+
+      <div class="card" id="sec-exp">
+        <div class="card-h">
+          <strong>Experience</strong>
+          <div class="card-actions">
+            <button type="button" class="small" id="add-exp">+ Add experience</button>
+          </div>
+        </div>
+        <div class="section-body" id="exp-body">
+          <div id="exp-list"></div>
+        </div>
+      </div>
+
+      <div class="card" id="sec-edu">
+        <div class="card-h">
+          <strong>Education</strong>
+          <div class="card-actions">
+            <button type="button" class="small" id="add-edu">+ Add education</button>
+          </div>
+        </div>
+        <div class="section-body" id="edu-body">
+          <div id="edu-list"></div>
+        </div>
+      </div>
+
+      <div class="card" id="sec-proj">
+        <div class="card-h">
+          <strong>Projects</strong>
+          <div class="card-actions">
+            <button type="button" class="small" id="add-proj">+ Add project</button>
+          </div>
+        </div>
+        <div class="section-body" id="proj-body">
+          <div id="proj-list"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grid">
+          <div><label>Cover Letter Company</label><input name="cover_company" placeholder="e.g. Nando’s, JD Sports, Tesco"></div>
+          <div><label>Cover Letter Role</label><input name="cover_role" placeholder="e.g. Sales Assistant, Barista, Software Intern"></div>
+        </div>
+        <div class="actions" style="margin-top:10px">
+          <button type="button" id="cvletter-html">Cover Letter HTML</button>
+          <button type="button" id="cvletter-pdf">Cover Letter PDF</button>
+        </div>
+      </div>
+
+      <textarea name="experience_json" id="experience_json" hidden></textarea>
+      <textarea name="education_json" id="education_json" hidden></textarea>
+      <textarea name="projects_json" id="projects_json" hidden></textarea>
+
+      <div class="actions">
+        <button type="submit" id="dl-html">Download HTML</button>
+        <button type="button" id="btn-save">Save & Get Link</button>
+        <button type="button" id="clear-form">Clear form</button>
+      </div>
+    </form>
+  </div>
+
+  <template id="tpl-exp">
+    <div class="row">
+      <input placeholder="Title (e.g., Web Developer)" data-k="title">
+      <input placeholder="Company" data-k="company">
+      <input placeholder="e.g. London, Manchester, Remote" data-k="location">
+      <input placeholder="Start (YYYY-MM)" data-k="start">
+      <input placeholder="End (YYYY-MM or Present)" data-k="end">
+      <div style="grid-column:1/-1"><input placeholder="Describe your key achievements or responsibilities — e.g. Improved sales by 20%, Trained new staff, Managed cash desk" data-k="highlights"></div>
+      <div style="grid-column:1/-1;text-align:right"><button type="button" class="small remove">Remove</button></div>
+    </div>
+  </template>
+
+  <template id="tpl-edu">
+    <div class="row">
+      <input placeholder="Qualification (e.g. GCSE, BSc, Diploma)" data-k="qualification">
+      <input placeholder="Institution" data-k="institution">
+      <input placeholder="Start (YYYY)" data-k="start">
+      <input placeholder="End (YYYY)" data-k="end">
+      <input placeholder="List qualifications or certifications — e.g. First Aid, Google Analytics, Coaching Level 1, Cybersecurity Fundamentals" data-k="details" style="grid-column:1/-1">
+      <div style="grid-column:1/-1;text-align:right"><button type="button" class="small remove">Remove</button></div>
+    </div>
+  </template>
+
+  <template id="tpl-proj">
+    <div class="row">
+      <input placeholder="Name" data-k="name">
+      <input placeholder="Link (optional)" data-k="link">
+      <input placeholder="Add projects you've worked on — e.g. Portfolio Website, Fitness App, Charity Event Organizer" data-k="summary" style="grid-column:1/-1">
+      <div style="grid-column:1/-1;text-align:right"><button type="button" class="small remove">Remove</button></div>
+    </div>
+  </template>
+
+  <script>
+    const KEY = "quickcv_form_v1";
+    const form = document.getElementById('cv-form');
+    const seg = document.getElementById('seg');
+    const templateField = document.getElementById('templateField');
+    const expList = document.getElementById('exp-list');
+    const eduList = document.getElementById('edu-list');
+    const projList = document.getElementById('proj-list');
+
+    function addRow(list, tplId, preset){
+      const tpl = document.getElementById(tplId);
+      const node = tpl.content.firstElementChild.cloneNode(true);
+      node.querySelector('.remove').onclick = () => { node.remove(); saveState(); };
+      list.appendChild(node);
+      if (preset) {
+        node.querySelectorAll('[data-k]').forEach(inp => {
+          const k = inp.getAttribute('data-k');
+          if (k === 'highlights' && Array.isArray(preset[k])) inp.value = preset[k].join(', ');
+          else if (preset[k]) inp.value = preset[k];
+        });
+      }
+      node.querySelectorAll('input').forEach(i => i.addEventListener('input', saveState));
+    }
+
+    function collect(container){
+      return Array.from(container.children).map(row => {
+        const obj = {};
+        row.querySelectorAll('[data-k]').forEach(inp => {
+          const k = inp.getAttribute('data-k');
+          if(k === 'highlights') obj[k] = inp.value.split(',').map(s=>s.trim()).filter(Boolean);
+          else obj[k] = inp.value.trim();
+        });
+        return obj;
+      }).filter(o => Object.values(o).some(v => v));
+    }
+
+    function setTemplate(val){
+      templateField.value = val;
+      document.querySelectorAll('.seg button').forEach(b => b.classList.toggle('active', b.dataset.template===val));
+      saveState();
+    }
+
+    function saveState(){
+      const data = {
+        template: templateField.value,
+        name: form.name.value, role: form.role.value,
+        location: form.location.value, email: form.email.value,
+        phone: form.phone.value, website: form.website.value,
+        summary: form.summary.value, skills: form.skills.value,
+        certs: form.certs ? form.certs.value : "", awards: form.awards ? form.awards.value : "",
+        experience: collect(expList), education: collect(eduList), projects: collect(projList),
+      };
+      try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e){}
+    }
+
+    function restoreState(){
+      let raw = localStorage.getItem(KEY);
+      if(!raw){
+        addRow(expList,'tpl-exp'); addRow(eduList,'tpl-edu'); addRow(projList,'tpl-proj');
+        setTemplate('classic'); return;
+      }
+      try {
+        const d = JSON.parse(raw);
+        templateField.value = d.template || 'classic';
+        ['name','role','location','email','phone','website','summary','skills','certs','awards'].forEach(k=>{
+          if(form[k]!==undefined) form[k].value = d[k] || "";
+        });
+        (d.experience?.length ? d.experience : [{}]).forEach(x=>addRow(expList,'tpl-exp',x));
+        (d.education?.length ? d.education : [{}]).forEach(x=>addRow(eduList,'tpl-edu',x));
+        (d.projects?.length ? d.projects : [{}]).forEach(x=>addRow(projList,'tpl-proj',x));
+        setTemplate(templateField.value);
+      } catch(e){
+        addRow(expList,'tpl-exp'); addRow(eduList,'tpl-edu'); addRow(projList,'tpl-proj');
+        setTemplate('classic');
+      }
+    }
+
+    function syncHiddenJSON(){
+      document.getElementById('experience_json').value = JSON.stringify(collect(expList));
+      document.getElementById('education_json').value = JSON.stringify(collect(eduList));
+      document.getElementById('projects_json').value = JSON.stringify(collect(projList));
+    }
+
+    document.getElementById('add-exp').onclick = () => { addRow(expList, 'tpl-exp'); saveState(); };
+    document.getElementById('add-edu').onclick = () => { addRow(eduList, 'tpl-edu'); saveState(); };
+    document.getElementById('add-proj').onclick = () => { addRow(projList, 'tpl-proj'); saveState(); };
+    seg.addEventListener('click', (e)=>{ const btn=e.target.closest('button'); if(!btn) return; setTemplate(btn.dataset.template); });
+    form.addEventListener('input', saveState);
+
+    document.getElementById('bar-analyze').addEventListener('click',()=>{ syncHiddenJSON(); saveState(); const a=form.action; form.action='/analyze'; form.submit(); form.action=a; });
+    document.getElementById('bar-pdf').addEventListener('click',()=>{ syncHiddenJSON(); saveState(); const a=form.action; form.action='/generate_pdf'; form.submit(); form.action=a; });
+
+    document.getElementById('dl-html').addEventListener('click', () => { form.action="/generate"; });
+    document.getElementById('btn-save').addEventListener('click',()=>{ const a=form.action; form.action='/save'; form.submit(); form.action=a; });
+    document.getElementById('btn-save').addEventListener('click',()=>{ const a=form.action; form.action='/save'; form.submit(); form.action=a; });
+    document.getElementById('cvletter-html').addEventListener('click',()=>{ syncHiddenJSON(); saveState(); const a=form.action; form.action='/cover_html'; form.submit(); form.action=a; });
+    document.getElementById('cvletter-pdf').addEventListener('click',()=>{ syncHiddenJSON(); saveState(); const a=form.action; form.action='/cover_pdf'; form.submit(); form.action=a; });
+    document.getElementById('clear-form').addEventListener('click', () => { localStorage.removeItem(KEY); location.reload(); });
+
+    form.addEventListener('submit', () => { syncHiddenJSON(); saveState(); });
+    restoreState();
+  </script>
+</body>
+</html>
