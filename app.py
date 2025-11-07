@@ -435,5 +435,11 @@ a.btn{{display:inline-block;text-decoration:none;margin-right:8px}}
     resp = make_response(html)
     resp.headers["Content-Type"] = "text/html; charset=utf-8"
     return resp
+@app.route("/health")
+def health():
+    return {"ok": True}, 200
 
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
 # Production uses Gunicorn (see Dockerfile)
